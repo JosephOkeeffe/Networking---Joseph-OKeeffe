@@ -1,0 +1,6 @@
+﻿  main.cpp
+C:\Users\josep\OneDrive - South East Technological University (Carlow Campus)\YEAR 4\Networking\Probability\Probability\main.cpp(9,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+C:\Users\josep\OneDrive - South East Technological University (Carlow Campus)\YEAR 4\Networking\Probability\Probability\main.cpp(15,34): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\josep\OneDrive - South East Technological University (Carlow Campus)\YEAR 4\Networking\Probability\Probability\main.cpp(15,29): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\josep\OneDrive - South East Technological University (Carlow Campus)\YEAR 4\Networking\Probability\Probability\main.cpp(15,24): warning C4305: 'argument': truncation from 'double' to 'float'
+  Probability.vcxproj -> C:\Users\josep\OneDrive - South East Technological University (Carlow Campus)\YEAR 4\Networking\Probability\x64\Debug\Probability.exe
