@@ -1,2 +1,6 @@
-﻿  Player.cpp
-  Online Tag Game.vcxproj -> C:\Users\labuser\Desktop\Networking - Lei Shi\Networking-Joseph-OKeeffe\Online Tag Game\x64\Debug\Online Tag Game.exe
+﻿  Client.cpp
+  Server.cpp
+  Generating Code...
+main.obj : error LNK2005: main already defined in Client.obj
+Server.obj : error LNK2005: main already defined in Client.obj
+C:\Users\labuser\Desktop\Networking - Lei Shi\Networking-Joseph-OKeeffe\Online Tag Game\x64\Debug\Online Tag Game.exe : fatal error LNK1169: one or more multiply defined symbols found
