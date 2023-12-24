@@ -22,7 +22,7 @@ public:
 
 	void setTagged(bool tagged);
 
-	sf::CircleShape m_circle;
+	sf::CircleShape m_circle{ 5 };
 	bool isTagged;
 
 	sf::Clock collisionCooldown;

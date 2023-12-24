@@ -3,7 +3,7 @@
 Player::Player(std::unique_ptr<sf::TcpSocket>* socket, sf::Vector2f position, int id)
 {
 	m_position = position;
-	m_name = "Default Name";
+	m_name = "Roy";
 	m_id = id;
 	m_socket = std::move(*socket);
 	m_velocity = sf::Vector2f(0, 0);

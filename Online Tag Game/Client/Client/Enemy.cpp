@@ -27,5 +27,6 @@ void Enemy::Init()
 	m_circle.setRadius(20.0f);
 	m_circle.setFillColor(sf::Color::Green);
 	m_circle.setPosition(100.0f, 100.0f);
+	m_circle.setPointCount(5);
 }
 

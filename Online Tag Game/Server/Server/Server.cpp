@@ -10,7 +10,7 @@ Server::Server()
 	m_isRunning = true;
 	m_listener.listen(45000);
 	m_selector.add(m_listener);
-	std::cout << "Server has started - Waiting for clients" << std::endl;
+	std::cout << "Server has started - Waiting for clients to join" << std::endl;
 }
 
 void Server::run()
@@ -19,13 +19,13 @@ void Server::run()
 	{
 		if (m_selector.wait())
 		{
-			if (m_selector.isReady(m_listener)) // if server is ready to receive new connections
+			if (m_selector.isReady(m_listener))
 			{
 				std::unique_ptr<sf::TcpSocket> tempSocket = std::make_unique<sf::TcpSocket>();
 
 				if (m_listener.accept(*tempSocket) == sf::Socket::Done)
 				{
-					if (m_playerNumber < m_maxPlayerNumber) //if server is not full
+					if (m_playerNumber < m_maxPlayerNumber) 
 					{
 						m_playerList.emplace_back(Player(&tempSocket, sf::Vector2f(0,0), m_currentID));
 						m_selector.add(*m_playerList.back().getSocket());
@@ -35,13 +35,13 @@ void Server::run()
 						outPacket << 0;
 						outPacket << m_currentID;
 
-						if (m_playerList.back().getSocket()->send(outPacket) != sf::Socket::Done) //Send client id
+						if (m_playerList.back().getSocket()->send(outPacket) != sf::Socket::Done) 
 						{
 							std::cout << "Error sending player index" << std::endl;
 						}
 						m_currentID++;
 					}
-					else //if server is full
+					else 
 					{
 						sf::Packet outPacket;
 						outPacket << 2;
@@ -57,7 +57,6 @@ void Server::run()
 			}
 			else
 			{
-				//Receive data
 				for (unsigned int i = 0; i < m_playerList.size(); i++)
 				{
 					if (m_selector.isReady(*m_playerList[i].getSocket()))
@@ -71,9 +70,8 @@ void Server::run()
 							received >> num;
 							received >> id;
 
-							// 0 is sent when player establishes a connection to the server
 
-							if (num == 1) // player disconnected, send message to all players to delete his character and delete him from servers players list
+							if (num == 1) 
 							{
 								sendPacket(received, i);
 
@@ -91,17 +89,15 @@ void Server::run()
 								std::cout << "Number of players in server: " << m_playerNumber << std::endl;
 								break;
 							}
-							//Number 2 means the server is full
-							//it is sent only to the player who cannot connect
 
-							else if (num == 3) // Players info
+							else if (num == 3)
 							{
 								if (id != -1)
 								{
 									sendPacket(received, i);
 								}
 							}
-							else if (num == 4) //Send text message
+							else if (num == 4) 
 							{
 								for (unsigned int k = 0; k < m_playerList.size(); k++)
 								{
@@ -110,7 +106,7 @@ void Server::run()
 									std::cout << "Sent: " << (received >> messageSent) << std::endl;
 								}
 							}
-							else if (num == 5) //Save player name
+							else if (num == 5)
 							{
 								if (m_playerList[i].getId() == id)
 								{
@@ -122,7 +118,7 @@ void Server::run()
 									std::cout << "Number of players: " << m_playerNumber << std::endl;
 								}
 							}
-							else if (num == 6) //send client list
+							else if (num == 6)
 							{
 								sf::Packet namePacket;
 								namePacket << 6;
@@ -138,7 +134,6 @@ void Server::run()
 							}
 						}
 
-						//If some player time-out - alert other players
 						float tempTime = m_clock.getElapsedTime().asSeconds() - m_playerList[i].getTimeout().asSeconds();
 						if (tempTime >= 5)
 						{
@@ -146,7 +141,7 @@ void Server::run()
 							timeOutPacket << 2;
 							timeOutPacket << m_playerList[i].getId();
 
-							std::cout << "Player: " << m_playerList[i].getName() << " ID: " << m_playerList[i].getId() << " timeouted" << std::endl;
+							std::cout << "Player: " << m_playerList[i].getName() << " ID: " << m_playerList[i].getId() << " timed out" << std::endl;
 							sendPacket(received, i);
 
 							m_selector.remove(*m_playerList[i].getSocket());

@@ -5,10 +5,10 @@ Game::Game() :
 	m_exitGame{false}
 {
 	port = 45000;
-	ipAdress = "localhost";
-	client = std::make_unique<Client>(ipAdress, port);
+	ipAddress = "localhost";
+	client = std::make_unique<Client>(ipAddress, port);
 	
-	initPlayerName();
+	Init();
 
 	socket.setBlocking(false);
 }
@@ -100,13 +100,13 @@ void Game::update(sf::Time t_deltaTime)
 
 			if (remainingTime != previousTime)
 			{
-				std::cout << "Player is on cooldown. Remaining time: " << remainingTime << " seconds." << std::endl;
+				std::cout << "Can't catch player, wait: '" << remainingTime << "' seconds." << std::endl;
 				previousTime = remainingTime;
 			}
 		}
 	}
 
-	if (m_window.hasFocus()) // To be able to move in that 1 window
+	if (m_window.hasFocus())
 	{
 		m_player.update(t_deltaTime);
 	}
@@ -128,7 +128,7 @@ void Game::render()
 		}
 		else
 		{
-			enemies[i]->m_circle.setFillColor(sf::Color::Magenta);
+			enemies[i]->m_circle.setFillColor(sf::Color::Green);
 		}
 	}
 
@@ -144,19 +144,13 @@ void Game::render()
 	m_window.display();
 }
 
-/// <summary>
-/// To create a new for new players
-/// </summary>
-void Game::initPlayerName()
+void Game::Init()
 {
-	std::cout << "Please enter your name" << std::endl;
+	std::cout << "Enter your name: ";
 	std::cin >> m_name;
 	m_player.setName(m_name);
 }
 
-/// <summary>
-/// Checks who is tagged and who isnt
-/// </summary>
 void Game::checkTags()
 {
 	m_player.isTagged = true;
@@ -171,12 +165,6 @@ void Game::checkTags()
 	}
 }
 
-/// <summary>
-/// Check the collisions between players
-/// </summary>
-/// <param name="player"> PLayer </param>
-/// <param name="enemy"> Enemies </param>
-/// <returns></returns>
 bool Game::checkCollision(Player& player, Enemy& enemy)
 {
 	sf::FloatRect playerBounds = player.m_circle.getGlobalBounds();
@@ -190,11 +178,6 @@ bool Game::checkCollision(Player& player, Enemy& enemy)
 	return false;
 }
 
-/// <summary>
-/// To wrap around the world, so it you enter the left screen side you
-/// should appear on th right
-/// </summary>
-/// <param name="player"></param>
 void Game::wrapAround(Player& player)
 {
 	sf::Vector2f playerPos = player.getPosition();

@@ -4,19 +4,15 @@ Client::Client(sf::IpAddress& ip, unsigned short& port)  : m_connected(false)
 {
 	if (connection.connect(ip, port, sf::seconds(5)) != sf::Socket::Done)
 	{
-		std::cout << "Error connecting to server" << std::endl;
+		_Output_Text("Error: Cant connect to server")
 	}
 	else
 	{
 		connection.setBlocking(false);
-		std::cout << "Connected to server" << std::endl;
+		_Output_Text("Connected to server")
 	}
 }
 
-/// <summary>
-/// Disconnect the player from the server
-/// </summary>
-/// <param name="p"></param>
 void Client::disconnectFromGame(Player* p)
 {
 	sf::Packet temp;
@@ -25,11 +21,11 @@ void Client::disconnectFromGame(Player* p)
 
 	if (connection.send(temp) != sf::Socket::Done)
 	{
-		std::cout << "Error sending disconnect command to server" << std::endl;
+		_Output_Text("Error: Cant send disconnect command to server")
 	}
 	else
 	{
-		std::cout << "Disconnected" << std::endl;
+		_Output_Text("Disconnected from the game")
 	}
 }
 
@@ -44,15 +40,10 @@ void Client::sendPlayer(Player* p)
 
 	if (connection.send(temp) != sf::Socket::Done)
 	{
-		std::cout << "Error sending data to server" << std::endl;
+		_Output_Text("Error: Cant send player data to the server")
 	}
 }
 
-/// <summary>
-/// Sends a message to server
-/// </summary>
-/// <param name="p"></param>
-/// <param name="text"></param>
 void Client::sendMessage(Player* p, std::string& text)
 {
 	sf::Packet temp;
@@ -64,7 +55,7 @@ void Client::sendMessage(Player* p, std::string& text)
 	{
 		if (connection.send(temp) != sf::Socket::Done)
 		{
-			std::cout << "Error sending text message to server" << std::endl;
+			_Output_Text("Error: Cant send text message to the server")
 		}
 	}
 }
@@ -78,7 +69,7 @@ void Client::sendMyName(Player* p)
 
 	if (connection.send(temp) != sf::Socket::Done)
 	{
-		std::cout << "Error sending my name" << std::endl;
+		_Output_Text("Error: Cant send name to the server")
 	}
 
 }
@@ -91,16 +82,10 @@ void Client::getPlayerList(Player* p)
 
 	if (connection.send(temp) != sf::Socket::Done)
 	{
-		std::cout << "Error sending getPlayerList to server" << std::endl;
+		_Output_Text("Error: Cant send Player List to the server")
 	}
 }
 
-/// <summary>
-/// Receive the stuff from the server
-/// and handles the variables going between
-/// </summary>
-/// <param name="enemies"> enemies </param>
-/// <param name="p"> player </param>
 void Client::receivePlayer(std::vector<std::unique_ptr<Enemy>>& enemies, Player* p)
 {
 	sf::Packet receivePacket;
@@ -111,7 +96,7 @@ void Client::receivePlayer(std::vector<std::unique_ptr<Enemy>>& enemies, Player*
 		receivePacket >> type;
 		receivePacket >> id;
 
-		if (type == 0) // you connected to server, get your ID
+		if (type == 0) 
 		{
 			if (p->getID() == -1)
 			{
@@ -123,23 +108,23 @@ void Client::receivePlayer(std::vector<std::unique_ptr<Enemy>>& enemies, Player*
 			}
 			m_connected = true;
 		}
-		else if (type == 1) // disconnected
+		else if (type == 1) 
 		{
 			for (unsigned int i = 0; i < enemies.size(); i++)
 			{
 				if (enemies[i]->getID() == id)
 				{
-					m_textMessage = "Player " + enemies[i]->getName() + " disconnected";
-					std::cout << "Enemy: " << enemies[i]->getID() << " deleted " << std::endl;
+					m_textMessage = "Player " + enemies[i]->getName() + " has disconnected from the game";
+					std::cout << "Enemy: " << enemies[i]->getID() << " has been deleted" << std::endl;
 					enemies.erase(enemies.begin() + i);
 				}
 			}
 		}
 		else if (type == 2)
 		{
-			std::cout << "Server is full" << std::endl;
+			_Output_Text("The server is full")
 		}
-		else if (type == 3) // player/enemies info
+		else if (type == 3) 
 		{
 			for (unsigned int i = 0; i < enemies.size(); i++)
 			{
@@ -156,7 +141,7 @@ void Client::receivePlayer(std::vector<std::unique_ptr<Enemy>>& enemies, Player*
 				}
 			}
 		}
-		else if (type == 4) // chat message received
+		else if (type == 4) 
 		{
 			std::string receivedMessage;
 			receivePacket >> receivedMessage;
@@ -180,16 +165,15 @@ void Client::receivePlayer(std::vector<std::unique_ptr<Enemy>>& enemies, Player*
 				m_textMessage = senderName + ":" + newString;
 			}
 		}
-		//Number 5 is reserved by the server for saving the name
 
-		else if (type == 6) //Create new players
+		else if (type == 6)
 		{
 			int playerNumber;
 			std::vector<std::string> playersName;
 			std::vector<int> playersId;
 
 			receivePacket >> playerNumber;
-			std::cout << "Num of players on server: " << playerNumber << std::endl;
+			std::cout << "Current players on the server: " << playerNumber << std::endl;
 
 			for (int i = 0; i < playerNumber; ++i)
 			{
@@ -201,27 +185,27 @@ void Client::receivePlayer(std::vector<std::unique_ptr<Enemy>>& enemies, Player*
 				playersId.push_back(tempId);
 			}
 
-			for (unsigned int i = 0; i < playersId.size(); ++i) //loop through ID's we got
+			for (unsigned int i = 0; i < playersId.size(); ++i) 
 			{
 				bool haveThatEnemy = false;
-				for (unsigned int v = 0; v < enemies.size(); v++) //check if we already have enemy with that id
+				for (unsigned int v = 0; v < enemies.size(); v++) 
 				{
 					if (enemies[v]->getID() == playersId[i])
 					{
 						haveThatEnemy = true;
 					}
 				}
-				if (playersId[i] != p->getID() && !haveThatEnemy) //if it is not our id and if we dont have that enemy, create a new enemy with that id
+				if (playersId[i] != p->getID() && !haveThatEnemy) 
 				{
 					enemies.push_back(std::make_unique<Enemy>(playersId[i], sf::Vector2f(100, 100), playersName[i]));
-					m_textMessage = "New player connected: " + playersName[i];
+					m_textMessage = "A new player connected: " + playersName[i];
 					std::cout << "Created a new enemy with id: " << playersId[i] << std::endl;
 				}
 			}
 			playersName.clear();
 			playersId.clear();
 		}
-		else if (type == 7) // Packet for tagging information
+		else if (type == 7)
 		{
 			int playerID;
 			bool isTagged;

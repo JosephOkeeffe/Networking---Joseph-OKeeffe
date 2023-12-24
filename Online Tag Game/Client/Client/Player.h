@@ -22,15 +22,12 @@ public:
 
 	bool getPlayerTag() { return isTagged; }
 
-	sf::CircleShape m_circle;
+	sf::CircleShape m_circle{ 5 };
 	bool isTagged;
 private:
 
-	void initPlayer();
+	void Init();
 	void movement(sf::Time deltaTime);
-
-	sf::Texture m_playerTexture;
-	sf::Sprite m_playerSprite;
 
 	int m_id;
 	std::string m_name;
